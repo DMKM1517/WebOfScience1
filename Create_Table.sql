@@ -1,0 +1,1 @@
+13:34:36	CREATE TABLE articles_1 AS ( SELECT  au.author, ar.title, ar.id FROM articles ar, articles_authors au WHERE ar.id = au.id )	2328526 row(s) affected Records: 2328526  Duplicates: 0  Warnings: 0	35.353 sec
