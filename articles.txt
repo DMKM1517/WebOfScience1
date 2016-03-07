@@ -1,0 +1,34 @@
+articles
+	-id
+	-main table
+	-Titles
+	-Journal
+	-Type
+	-doi
+	-volume
+	-issue
+	-BP (Begin Page)
+	-EP (End Page)
+articles_author
+	-id: id article
+	-d: position of author in list of author
+	-author: it's name
+articles_keywords
+	-id: id of articles
+	-type: an original kw see science direct
+	-keyword: value
+articles_addresses
+	-id: of article
+	-d1: position of @ in articles
+	-d2: line of addresse
+! UMR_EA is and id of french labs 
+articles_country
+	-the line containing country name in articles_address
+articles_institution
+	-some extraction of institution lines in articles_address
+articles_refs
+	-FirstAuto, Journal, Year, Value, Page.
+	Sum and id of referenced articles
+article_subject
+	-id: of article
+	-subject: value

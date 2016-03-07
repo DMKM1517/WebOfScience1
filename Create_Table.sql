@@ -1,1 +1,0 @@
-14:38:37	CREATE TABLE articles_1 AS ( SELECT  (@cnt := @cnt + 1) AS rowid, au.author, ar.title, ar.id FROM articles ar, articles_authors au WHERE ar.id = au.id  )	2328526 row(s) affected Records: 2328526  Duplicates: 0  Warnings: 0	36.773 sec
