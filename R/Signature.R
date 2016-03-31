@@ -1,9 +1,13 @@
-library(stringr)
 library(RMySQL)
 library(dplyr)
 library(tm)
 library(plyr)
+library(stringdist)
+library(stringi)
+library(stringr)
 
+#######################################################
+#################CONNECT TO DATABASE###################
 drv<- dbDriver("MySQL")
 pw<- {"dmkm1234"}
 ucscDb <- dbConnect( MySQL(), dbname="dmkm_articles",
@@ -11,55 +15,108 @@ ucscDb <- dbConnect( MySQL(), dbname="dmkm_articles",
                      user="root", password=pw 
 )
 rm(pw)
+#################CONNECT TO DATABASE###################
+#######################################################
 
-# Goal: "id","d", "author","title", "coauthors","journal","year", "keyword", "institution"
 
-articles_data<- dbReadTable(ucscDb,"articles_1")
-articles_only<-dbReadTable(ucscDb,"articles")
+#######################################################
+#################READ DATASETS#########################
+
+# Goal:  Create Signature with following features
+# ("id","d", "author","title", "coauthors","journal","year", "keyword", "institution")
+
+articles<-dbReadTable(ucscDb,"articles")
 keywords<- dbReadTable(ucscDb,"articles_keywords_clean_sel")
 institution <- dbReadTable(ucscDb, "articles_institutions")
 position <- dbReadTable(ucscDb,"articles_authors")
 
+#################READ DATASETS#########################
+#######################################################
 
+#######################################################
+######### PreProcess Dataframes for Joins #############
 
-#########Joining the position to the articles_data table
-articles<- articles_only %>% select(id, title, authors, journal, year)
-articles_data<- left_join(position, articles)
-
-#Extracting features for the signature
-
-#features = articles_only %>% select(id, title, authors, journal, year)
-
+#Preprocess Keywords: Aggregate keywords (Keywords per article id)
 keywords_agg = aggregate(keyword~id, paste , collapse=",", data= keywords)
 
+#Preprocess Institutions: 
+#New column with unique ID for author-institution
 institution$d3 = paste0(institution$id,",",institution$d1)
-institution = aggregate(institution~d3, paste , collapse=",", data= institution) 
+#Aggregate institutions (Institutions per Author)
+institution = aggregate(institution~d3, paste , collapse=",", data= institution)
+#Recover id, and distance
 institution_missing = ldply(strsplit(institution$d3, split =","))
+#Bind together into dataframe
 institution_agg = cbind(institution_missing,institution) %>% select(V1, V2 , institution)
+#Rename
 names(institution_agg) = c("id", "d", "institution")
+#Correct format
 institution_agg$id = as.integer(institution_agg$id)
 institution_agg$d = as.integer(institution_agg$d)
 
+#Preprocess Coauthors
+coauthors = aggregate(author~id, paste , collapse=", ", data= position) #
+colnames(coauthors) = c("id","coauthors")
 
+
+######### PreProcess Dataframes for Joins #############
+#######################################################
+
+
+#######################################################
+###################  JOINS  ###########################
 #Join to create signatures
-signature<- left_join(articles_data, keywords_agg)
+articles<- articles %>% select(id, title,journal, year) #Put back author if it doesnt work
+signature<- left_join(position, articles)
+signature<- left_join(signature, keywords_agg)
 signature<- left_join(signature,institution_agg)
+signature<-left_join(signature, coauthors)
 signature[is.na(signature)]<-''
 #head(signature)
 
 #Convert authors into co-authors only
-coauthors <-str_replace_all(signature$authors, ',', '')
-coauthors <- str_replace_all(coauthors, ';', ',')
+#coauthors <-str_replace_all(signature$authors, ',', '')
+#coauthors <- str_replace_all(coauthors, ';', ',')
 
-coauthors <- str_replace_all(coauthors, signature$author, '')
-coauthors <- str_replace_all(coauthors,'^, ' , '') 
-coauthors <- str_replace_all(coauthors,', ,', ',') #and ending comma
-coauthors <- str_replace_all(coauthors,', $', '')
+#Remove author from coauthors
+rm(coauthors, institution_agg, institution_missing, institution, keywords,keywords_agg,position)
+coauthors <- str_replace_all(signature$coauthors, signature$author, '')
+#Remove starting and ending comma
+coauthors <- str_replace_all(coauthors,'^, |, $' , '') 
+#Remove middle commas
+coauthors <- str_replace_all(coauthors,', ,', ',')
 
-signature$authors <- coauthors
-names(signature) <- c("id","d", "author","title", "coauthors","journal","year", "keyword", "institution")
+signature$coauthors <- coauthors
+#names(signature) <- c("id","d", "author","title", "coauthors","journal","year", "keyword", "institution")
+rm(articles, coauthors)
+#################### JOINS ############################
+#######################################################
+
+#######################################################
+#################### PHONETIC #########################
+#Step1 - Strip accents from Authors
+authors_noaccent <- stri_trans_general(signature$author,"Latin-ASCII")
+
+#Step2 - Soundex
+signature$phonetic <- as.factor(phonetic(authors_noaccent))
+
+#Step3 - Unique ID
+unique_id <- rownames(signature)
+signature$sigID = unique_id
+#Reorder
+signature = signature[, c(11,3,1,2,4,9,5:8,10)]
+#################### PHONETIC #########################
+#######################################################
+
+
+
+#######################################################
+###########  WRITE TO DB AND DISCONNECT  ##############
 
 dbRemoveTable(ucscDb, "authors_signature")
 dbWriteTable(ucscDb, "authors_signature", signature)
 
 dbDisconnect(ucscDb)
+
+###########  WRITE TO DB AND DISCONNECT  ##############
+#######################################################
