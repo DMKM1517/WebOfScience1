@@ -66,11 +66,17 @@ df <- data.frame(df[match(ids[1,], df$sigID), ], df[match(ids[2,], df$sigID), ])
     ##### Create Features #####
 #Author Name Distance
 df$dist_author = jaccard_distance(df,"author","author.1")
+#Title Distance
+df$dist_title = jaccard_distance(df, "title","title.1")
 #Year
 df$dist_year = year_distance(df)
 #Coauthors Distance (jaccard)
 df$dist_coauthor = jaccard_distance(df,"coauthors","coauthors.1")
 #Keyword Distance   (cosine)
 df$dist_keyword = cosine_distance(df,"keyword","keyword.1")
+#Journal Distance
+df$dist_journal = cosine_distance(df,"journal","journal.1")
+#Institution Distance
+df$dist_institution = cosine_distance(df,"institution","institution.1")
 
 #Query for same author:   df %>% filter(sigID == 281058 & id == 25703 & id.1 == 49651)
