@@ -39,7 +39,11 @@ position <- dbReadTable(ucscDb,"articles_authors")
 #Preprocess Keywords: Aggregate keywords (Keywords per article id)
 keywords_agg = aggregate(keyword~id, paste , collapse=",", data= keywords)
 
+<<<<<<< HEAD
 #Preprocess Institutions:
+=======
+#Preprocess Institutions: 
+>>>>>>> 1631d30bd4996799b828742185ab7fa01b3a5a01
 #New column with unique ID for author-institution
 institution$d3 = paste0(institution$id,",",institution$d1)
 #Aggregate institutions (Institutions per Author)
@@ -82,7 +86,11 @@ signature[is.na(signature)]<-''
 rm(coauthors, institution_agg, institution_missing, institution, keywords,keywords_agg,position)
 coauthors <- str_replace_all(signature$coauthors, signature$author, '')
 #Remove starting and ending comma
+<<<<<<< HEAD
 coauthors <- str_replace_all(coauthors,'^, |, $' , '')
+=======
+coauthors <- str_replace_all(coauthors,'^, |, $' , '') 
+>>>>>>> 1631d30bd4996799b828742185ab7fa01b3a5a01
 #Remove middle commas
 coauthors <- str_replace_all(coauthors,', ,', ',')
 
