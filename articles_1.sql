@@ -1,3 +1,9 @@
+CREATE TABLE articles_1 AS (
+SELECT  au.author, ar.title, ar.id
+FROM articles ar, articles_authors au
+WHERE ar.id = au.id )
+;
+
 create table author_count as ( 
 SELECT author, count(id)
 from articles_authors
