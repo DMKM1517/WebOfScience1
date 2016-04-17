@@ -153,17 +153,30 @@ drop table graph ;
 create table graph as ( 
 	select s1.author_id as a_1, s2.author_id as a_2
 	from signature s1,	signature s2
-	where s1.signature_id != s2.signature_id
+	where s1.author_id != s2.author_id
 	and s1.article_id = s2.article_id
-	limit 1000000000
+	limit 1000000
 )
 ;
 
-select count(*)
+alter table graph
+add column distance int
+;
+
+
+update graph  set distance = null where distance is not null;
+
+select * from graph where distance is  not null;
+
+update graph set distance = null where a_1='2' and a_2='155241' and distance is null ;
+update graph set distance = '1' where a_1='2' and a_2='41704' and distance is null 
+
+
+select s1.author_id, s2.author_id
 	from signature s1,	signature s2
 	where s1.signature_id != s2.signature_id
 	and s1.article_id = s2.article_id
-	limit 100000000
+	and s1.author_id = '2'
 ;
 
 select count(*) from graph;
