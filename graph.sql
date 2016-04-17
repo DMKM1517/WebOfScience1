@@ -1,3 +1,47 @@
+SELECT author, count(id)
+from articles_authors
+group by author
+order by count(id) desc
+;
+
+Select articles.id as id_article, authors.rowid as id_author 
+from articles, authors
+;
+
+drop table authors;
+SET @cnt = 0;
+CREATE TABLE authors AS (
+SELECT (@cnt := @cnt + 1) AS rowid, a.author from (
+select distinct au.author
+FROM articles_authors au) a
+);
+
+select count(*)
+from articles
+;
+
+select count(*) 
+from authors
+;
+
+select count(*)
+from (
+select distinct author
+from dmkm_articles.articles_authors_disambiguated
+) a
+;
+
+select count(*)
+from (
+select distinct author
+from articles_authors
+) a
+;
+
+select count(*)
+from articles
+;
+
 drop table author_count;
 create table author_count as ( 
 SELECT author, count(id) 
@@ -80,14 +124,10 @@ CREATE INDEX journal_index2 on journals (journal) using hash;
 drop table signature;
 SET @cnt = 0;
 create table signature as (
-	Select  (@cnt := @cnt + 1) AS signature_id, ar.id as article_id, aus.author_id/*, jou.journal_id, ar.year*/
-	from 	articles ar, 
-			articles_authors au, 
-			authors aus/*	,
-			journals jou*/
+	Select  (@cnt := @cnt + 1) AS signature_id, ar.id as article_id, aus.author_id
+	from 	articles ar, articles_authors au, authors aus
 	where 	ar.id = au.id 
 	AND 	au.author = aus.author
-/*	AND		ar.journal = jou.journal*/
 	AND 	type = 'Article'
 )
 ;
@@ -111,16 +151,22 @@ create table signaturetrim as (select * from signature limit 100000);
 
 drop table graph ;
 create table graph as ( 
-	select s1.author_id as a_1, s2.author_id as a_2, 1 as link
-	from signature s1,
-		signature s2
+	select s1.author_id as a_1, s2.author_id as a_2
+	from signature s1,	signature s2
 	where s1.signature_id != s2.signature_id
 	and s1.article_id = s2.article_id
-	limit 100
+	limit 1000000000
 )
 ;
 
-select * from graph;
+select count(*)
+	from signature s1,	signature s2
+	where s1.signature_id != s2.signature_id
+	and s1.article_id = s2.article_id
+	limit 100000000
+;
+
+select count(*) from graph;
 
 drop table nodes;
 create table nodes as (
@@ -128,6 +174,8 @@ select distinct a_1 as id, a_1 as label, null as "interval"
 from graph
 )
 ;
+
+select count(*) from nodes;
 
 drop table edges;
 create table edges as (
