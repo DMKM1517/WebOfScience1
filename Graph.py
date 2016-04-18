@@ -12,7 +12,7 @@ import networkx as nx
 def find_neighbour(author):
     cnx = mysql.connector.connect(user='root', password='dmkm1234',
                                   host='localhost',
-                                  database='dmkm_articles', port='8889')
+                                  database='dmkm_articles')
     cursor = cnx.cursor()
     query = ("select s1.author_id as a_1, s2.author_id as a_2 "
                 "from signature s1, signature s2 "
@@ -31,8 +31,8 @@ def list_author(exit,author):
     flatten = list(set([val for sublist in exit for val in sublist]))
     try:
         flatten.remove(author)
-    except ValueError:
-        print(a)
+    except:
+        pass
     return flatten
 def add_vicinity(graph,author):
     edges = find_neighbour(author)
@@ -51,27 +51,25 @@ def graph_r(G,author,k):
 
 cnx = mysql.connector.connect(user='root', password='dmkm1234',
                                   host='localhost',
-                                  database='dmkm_articles', port='8889')
+                                  database='dmkm_articles')
 cursor = cnx.cursor(buffered=True)
 cursorb = cnx.cursor(buffered=True)
 
-query = ("select a_1, a_2 from graph where distance is null limit 10")
+query = ("select a_1, a_2 from author_lattice where distance is null limit 10")
 cursor.execute(query)
 
 query2 = ("update graph "
           "set distance = %s "
           "where a_1= %s and a_2= %s and distance is null "
                 )
-i=0
 for (a_1,a_2) in cursor:
     G=nx.Graph()
-    k=5
+    k=1
     graph_r(G,a_1,k)
     graph_r(G,a_2,k)
-    i = i+1
     d = None
     try:
-        d = str(len(nx.shortest_path(G,a_1,a_2))-1)
+        d = str(len(nx.shortest_path(G,a_1,a_2)))
         cursorb.execute(query2,(d,a_1,a_2))
         cnx.commit()
         print(str(a_1)+' '+str(a_2)+' '+str(d)+' conn')
