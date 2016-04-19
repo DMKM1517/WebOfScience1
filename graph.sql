@@ -7,7 +7,7 @@ order by count(id) desc
 Select articles.id as id_article, authors.rowid as id_author 
 from articles, authors
 ;
-
+/*
 drop table authors;
 SET @cnt = 0;
 CREATE TABLE authors AS (
@@ -15,14 +15,11 @@ SELECT (@cnt := @cnt + 1) AS rowid, a.author from (
 select distinct au.author
 FROM articles_authors au) a
 );
-
+*/
 select count(*)
 from articles
 ;
 
-select count(*) 
-from authors
-;
 
 select count(*)
 from (
@@ -64,6 +61,10 @@ SELECT (@cnt := @cnt + 1) AS author_id, a.author from (
 	FROM articles_authors au) a
 );
 
+CREATE INDEX author_index ON articles_authors (author) USING HASH;
+CREATE INDEX authors_index ON authors (author) USING HASH;
+CREATE INDEX author_id_index ON authors (author_id) USING HASH;
+
 select *
 from authors
 limit 100
@@ -84,6 +85,18 @@ from (
 	group by author
 ) as b
 ;
+
+create table author_rank as (
+select au.author_id, a.author, a.c
+from (SELECT author, count(id) as c
+from articles_authors
+group by author	) a,
+authors au
+where a.author = au.author
+order by a.c desc
+)
+;
+
 
 drop table authors_per_article;
 create table authors_per_article as ( 
@@ -169,7 +182,7 @@ update graph  set distance = null where distance is not null;
 select * from graph where distance is  not null;
 
 update graph set distance = null where a_1='2' and a_2='155241' and distance is null ;
-update graph set distance = '1' where a_1='2' and a_2='41704' and distance is null 
+update graph set distance = '1' where a_1='2' and a_2='41704' and distance is null ;
 
 
 select s1.author_id, s2.author_id
@@ -197,3 +210,76 @@ from graph
 )
 ;
 
+drop table author_lattice;
+create table author_lattice as (
+select  a1.author_id as a_1, a2.author_id as a_2
+from authors a1,authors a2
+	where a1.author_id != a2.author_id
+	and a1.author_id < a2.author_id
+	limit 1000000
+)
+;
+
+alter table author_lattice
+add column distance int
+;
+
+CREATE INDEX author_id_1_index ON author_lattice (a_1) USING HASH;
+CREATE INDEX authors_id_2_index ON author_lattice (a_2) USING HASH;
+
+select a_1, a_2
+from signature
+where a_1='6'
+;
+
+select *
+from author_rank
+where author_id = '11'
+;
+
+select *
+from signature
+order by article_id
+;
+
+select a_1, a_2 from (
+select s1.author_id as a_1, s2.author_id as a_2
+	from signature s1,	signature s2
+	where s1.author_id != s2.author_id
+	and s1.article_id = s2.article_id
+	and s1.author_id = '14'
+	)a
+	;
+	
+select *
+from signature
+where 	author_id = '243'
+
+;
+
+select * 
+from signature
+where article_id = '117320'
+;
+
+select * 
+from articles
+where id = '117320'
+;
+
+select a_1,a_2
+from author_lattice au, author_rank r
+where au.a_1 = r.author_id
+and distance is null
+order by c desc
+;
+
+select * from author_rank;
+
+select s1.author_id as a_1, s2.author_id as a_2
+from signature s1, signature s2, author_rank r
+where s1.author_id != s2.author_id
+and s1.article_id = s2.article_id
+and s1.author_id = r.author_id
+
+;
