@@ -164,17 +164,24 @@ create table signaturetrim as (select * from signature limit 100000);
 
 drop table graph ;
 create table graph as ( 
-	select s1.author_id as a_1, s2.author_id as a_2
+	select s1.signature_id as ss1, s2.signature_id as ss2
 	from signature s1,	signature s2
 	where s1.author_id != s2.author_id
 	and s1.article_id = s2.article_id
-	limit 1000000
+	limit 1
 )
 ;
 
 alter table graph
 add column distance int
 ;
+
+truncate table graph;
+
+select * 
+from graph;
+
+select count(*) from signature;
 
 
 
