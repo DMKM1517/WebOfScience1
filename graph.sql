@@ -177,6 +177,8 @@ add column distance int
 ;
 
 
+
+
 update graph  set distance = null where distance is not null;
 
 select * from graph where distance is  not null;
@@ -247,7 +249,7 @@ select s1.author_id as a_1, s2.author_id as a_2
 	from signature s1,	signature s2
 	where s1.author_id != s2.author_id
 	and s1.article_id = s2.article_id
-	and s1.author_id = '14'
+	and s1.author_id = ''
 	)a
 	;
 	
@@ -259,7 +261,7 @@ where 	author_id = '243'
 
 select * 
 from signature
-where article_id = '117320'
+where article_id = '1'
 ;
 
 select * 
@@ -281,5 +283,18 @@ from signature s1, signature s2, author_rank r
 where s1.author_id != s2.author_id
 and s1.article_id = s2.article_id
 and s1.author_id = r.author_id
+limit 100000 offset (3*100000)
+;
 
+select count(*) from (
+select s1.author_id as a_1, s2.author_id as a_2
+from signature s1, signature s2
+where s1.author_id != s2.author_id
+and s1.article_id = s2.article_id
+and s1.author_id = '25347'
+)a
+;
+
+select *
+from authors
 ;
