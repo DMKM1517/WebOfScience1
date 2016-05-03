@@ -1,4 +1,4 @@
-LOAD CSV WITH HEADERS FROM "http://poincare:8888/signature/signaturetrimcast.csv" AS csvLine
+LOAD CSV WITH HEADERS FROM "http://poincare:8888/signature/signaturetrim_20.csv" AS csvLine
 CREATE (s:Signature { 
 	signature_id: toInt(csvLine.signature_id), 
 	article_id: toInt(csvLine.article_id),
@@ -17,7 +17,7 @@ CREATE (s1)-[r:COAUTHOR {article_id : s1.author_id + '<->' + s2.author_id}] -> (
 RETURN r
 
 MATCH (s1:Signature)-[r:COAUTHOR]-(s2:Signature)
-RETURN (r)
+RETURN r
 
 MATCH (s1)
 DETACH DELETE s1
