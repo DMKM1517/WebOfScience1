@@ -1,4 +1,4 @@
-LOAD CSV WITH HEADERS FROM "http://poincare:8888/signature/signaturetrim_20.csv" AS csvLine
+LOAD CSV WITH HEADERS FROM "http://poincare/signature/signaturetrim_20.csv" AS csvLine
 CREATE (s:Signature { 
 	signature_id: toInt(csvLine.signature_id), 
 	article_id: toInt(csvLine.article_id),
@@ -15,6 +15,7 @@ WHERE s1.article_id = s2.article_id
 AND	  s1.author_id <> s2.author_id 
 CREATE (s1)-[r:COAUTHOR {article_id : s1.author_id + '<->' + s2.author_id}] -> (s2)
 RETURN r
+
 
 MATCH (s1:Signature)-[r:COAUTHOR]-(s2:Signature)
 RETURN r

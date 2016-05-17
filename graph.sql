@@ -86,17 +86,19 @@ from (
 ) as b
 ;
 
+drop table author_rank;
 create table author_rank as (
-select au.author_id, a.author, a.c
-from (SELECT author, count(id) as c
+select au.author_id, a.author, a.degree
+from (SELECT author, count(id) as degree
 from articles_authors
 group by author	) a,
 authors au
 where a.author = au.author
-order by a.c desc
+order by a.degree desc
 )
 ;
 
+select * from authors;
 
 drop table authors_per_article;
 create table authors_per_article as ( 
@@ -305,3 +307,4 @@ and s1.author_id = '25347'
 select *
 from authors
 ;
+
