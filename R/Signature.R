@@ -5,14 +5,15 @@ library(plyr)
 library(stringdist)
 library(stringi)
 library(stringr)
+library(phonics)
 
 #######################################################
 #################CONNECT TO DATABASE###################
 drv<- dbDriver("MySQL")
 pw<- {"dmkm1234"}
 ucscDb <- dbConnect( MySQL(), dbname="dmkm_articles",
-host= "127.0.0.1", port=8889,
-user="root", password=pw
+                     host= "127.0.0.1", port=8889,
+                     user="root", password=pw 
 )
 rm(pw)
 #################CONNECT TO DATABASE###################
@@ -39,11 +40,7 @@ position <- dbReadTable(ucscDb,"articles_authors")
 #Preprocess Keywords: Aggregate keywords (Keywords per article id)
 keywords_agg = aggregate(keyword~id, paste , collapse=",", data= keywords)
 
-<<<<<<< HEAD
-#Preprocess Institutions:
-=======
 #Preprocess Institutions: 
->>>>>>> 1631d30bd4996799b828742185ab7fa01b3a5a01
 #New column with unique ID for author-institution
 institution$d3 = paste0(institution$id,",",institution$d1)
 #Aggregate institutions (Institutions per Author)
@@ -78,19 +75,13 @@ signature<-left_join(signature, coauthors)
 signature[is.na(signature)]<-''
 #head(signature)
 
-#Convert authors into co-authors only
-#coauthors <-str_replace_all(signature$authors, ',', '')
-#coauthors <- str_replace_all(coauthors, ';', ',')
-
-#Remove author from coauthors
 rm(coauthors, institution_agg, institution_missing, institution, keywords,keywords_agg,position)
+
+#Convert authors into co-authors only
+#Remove author from coauthors
 coauthors <- str_replace_all(signature$coauthors, signature$author, '')
 #Remove starting and ending comma
-<<<<<<< HEAD
-coauthors <- str_replace_all(coauthors,'^, |, $' , '')
-=======
 coauthors <- str_replace_all(coauthors,'^, |, $' , '') 
->>>>>>> 1631d30bd4996799b828742185ab7fa01b3a5a01
 #Remove middle commas
 coauthors <- str_replace_all(coauthors,', ,', ',')
 
@@ -102,11 +93,24 @@ rm(articles, coauthors)
 
 #######################################################
 #################### PHONETIC #########################
-#Step1 - Strip accents from Authors
-authors_noaccent <- stri_trans_general(signature$author,"Latin-ASCII")
+phonetics<- function(author){
+  #Step1 - Strip accents from Authors
+  authors_noaccent <- stri_trans_general(author,"Latin-ASCII")
+  firstname <- gsub("([A-Za-z]+).*", "\\1", authors_noaccent)
+  #Step2 - Soundex
+  phonetic(authors_noaccent)   #Deal with -Abdekabel  Ab de kabel-
+}
+
+phon_nysiis<- function(author){
+  #Step1 - Strip accents from Authors
+  authors_noaccent <- stri_trans_general(author,"Latin-ASCII")
+  firstname <- gsub("([A-Za-z]+).*", "\\1", authors_noaccent)
+  #Step2 - Nysiis
+  nysiis(firstname, maxCodeLen = 8) 
+}
 
 #Step2 - Soundex
-signature$phonetic <- as.factor(phonetic(authors_noaccent))
+signature$phonetic <- phon_nysiis(signature$author)
 
 #Step3 - Unique ID
 unique_id <- rownames(signature)
