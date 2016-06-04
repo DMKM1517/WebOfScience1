@@ -53,7 +53,8 @@ The full dataset is not possible to be loaded in the free version of Shiny, for 
 
 Due to the subset, we have specific pairs of author and titles that can be chosen, here are some examples to try:
 
-```
+<a target="_blank" href="https://raw.githubusercontent.com/DMKM1517/WebOfScience1/master/WebOfScienceShiny/disambiguation-app/data/author.csv"> Raw list of author and title pairs</a>
+
 
 Future Work
 ========================================================
