@@ -36,6 +36,7 @@ How does it works?
 
 For the same author name and title: _A Study of Adaptive Locomotive Behaviors of a Biped Robot: Patterns Generation and Classification_
 ```{r,echo=FALSE}
+options(width = 4000)
 df %>% select(  "Authors"=dist_author,
                                "Initial's" = dist_initials,
                                "Title" = dist_title,
@@ -46,10 +47,16 @@ df %>% select(
                                "Institution" = dist_institution) %>% slice(1)
 ```
 
-Limitations and Future Work
+Limitations
 ========================================================
 The full dataset is not possible to be loaded in the free version of Shiny, for this reason we uploaded a subset of 20,000 instances in order for it to be deployed.
 
+Due to the subset, we have specific pairs of author and titles that can be chosen, here are some examples to try:
+
+```
+
+Future Work
+========================================================
 For Future work, we will allow the user to input all the information for two articles in order to receive the probability of them being the same author according to our model.
 
 How to access the Application?
@@ -58,4 +65,6 @@ Here you can try it for yourself.
 
 <a target="_blank" href="https://saulabrm.shinyapps.io/disambiguation-app/">Author Disambiguation - Disambiguate your author</a>
 
-<a target="_blank" href="https://github.com/dormantroot/Data-Science/tree/master/Capstone%20Project/PredictWord"> Here's the source code</a>
+<a target="_blank" href="https://github.com/DMKM1517/WebOfScience1/tree/master/WebOfScienceShiny/disambiguation-app"> Here's the source code</a>
+
+For the full dataset, please contact us.

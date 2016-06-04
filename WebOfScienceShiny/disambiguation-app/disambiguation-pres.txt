@@ -24,10 +24,23 @@ User Guide:
 <p>Example:</p>
 
 ```
-         Author
-1 Ben Ouezdou F
-                                                                     Title
-1 From Force Control and Sensory-Motor Informations to Mass Discrimination
+## 
+## Attaching package: 'dplyr'
+## 
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```
+##          Author
+## 1 Ben Ouezdou F
+##                                                                      Title
+## 1 From Force Control and Sensory-Motor Informations to Mass Discrimination
 ```
 If the title does not belong to the author in our database, then there will be no output. 
 
@@ -39,25 +52,19 @@ How does it works?
 For the same author name and title: _A Study of Adaptive Locomotive Behaviors of a Biped Robot: Patterns Generation and Classification_
 
 ```
-  Authors Initial's     Title Coauthors
-1       0         0 0.1391735      0.56
+##   Authors Initial's     Title Coauthors
+## 1       0         0 0.1391735      0.56
 ```
 
 ```
-   Keywords Institution
-1 0.2894244           1
+##    Keywords Institution
+## 1 0.2894244           1
 ```
 
-Limitations
+Limitations and Future Work
 ========================================================
 The full dataset is not possible to be loaded in the free version of Shiny, for this reason we uploaded a subset of 20,000 instances in order for it to be deployed.
 
-Due to the subset, we have specific pairs of author and titles that can be chosen, here are some examples to try:
-
-```
-
-Future Work
-========================================================
 For Future work, we will allow the user to input all the information for two articles in order to receive the probability of them being the same author according to our model.
 
 How to access the Application?
