@@ -1,5 +1,4 @@
 library(RMySQL)
-library(dplyr)
 library(tm)
 library(stringdist)
 library(stringi)
@@ -14,6 +13,7 @@ library(rpart.plot)
 library(e1071)        #SVM #NB
 library(caret)
 library(party)        #CTREE
+library(dplyr)
 set.seed(111)
 ##################    FUNCTIONS    ##################  
 phonetics<- function(author){
@@ -204,7 +204,7 @@ for(i in 1:k){
 #Build Confusion Matrix and validate Accuracy
 results.table <- results %>% 
                     group_by(model) %>% 
-                    summarise(accuracy = sum(label == Prediction) / n())
+                    summarise(accuracy = (sum(label == Prediction) / n()))
 results.table
 write.table(results, file = "resultsmatrix.csv")
 
@@ -234,11 +234,8 @@ accuracyEnsemble
 
 
 
-###############################        GENERATE MODELS       ###################
-#Prepare Full Dataset 
-df = Combinations(disam)
-#Create features
-df = features(df)
+
+
 
 ###################### Feature Selection ##################
 
@@ -261,6 +258,12 @@ print(importance)
 # Plot importance
 plot(importance)
 
+###############################        GENERATE and SAVE       ###################
+###############################              MODELS            ###################
+#Prepare Full Dataset 
+df = Combinations(disam)
+#Create features
+df = features(df)
 ###############################        RANDOM FOREST       ###################
 AuthorForest = randomForest(as.factor(label) ~ dist_author+ dist_initials + dist_title + dist_year + dist_coauthor +
                               dist_keyword  + dist_journal + dist_institution,
@@ -268,14 +271,12 @@ AuthorForest = randomForest(as.factor(label) ~ dist_author+ dist_initials + dist
 save(AuthorForest, file = "AuthorForest.rda")
 #######################################      SVM     ######################################
 AuthorSVM = svm(as.factor(label) ~ dist_author+ dist_initials + dist_title + dist_year + dist_coauthor +
-                  dist_keyword  + dist_journal + dist_institution,
-                  data=df)
+                  dist_keyword  + dist_journal + dist_institution,data=df)
 save(AuthorSVM, file = "AuthorSVM.rda")
 
 #################### RPART With CrosValidation   ##################
 AuthorCART = rpart(label ~ dist_author+ dist_initials + dist_title + dist_year + dist_coauthor +
-                     dist_keyword  + dist_journal + dist_institution,
-                   data=df, method = "class", minbucket = 25, cp=0.5)
+                     dist_keyword  + dist_journal + dist_institution, data=df, method = "class", minbucket = 25, cp=0.5)
 save(AuthorCART, file = "AuthorCART.rda")
 
 ############ CTREE
