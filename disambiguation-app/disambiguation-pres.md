@@ -1,0 +1,73 @@
+
+Author Disambiguation
+========================================================
+A Shiny R application to disambiguate authors.
+
+
+Author Disambiguation 
+========================================================
+Author disambiguation has been a challenge in the last couple of years. With the increasing number of publications in the scientific scene and the different format of publishing the names of the authors, the problem challenge arose in being able to identify all articles or papers written by a specific author who wrote a specific paper.
+
+
+Application
+========================================================
+To address this challenge, we have developed an algorithm that compares a specific author and article with all the other ones existing in publications in the database which could possible be the same. 
+
+How does it work?
+========================================================
+User Guide:
+
+1. The enters the author and article title in the fields.
+2. The applications runs a predictive model in order to compare with this author with the others in the dataset.
+3. The application outputs the list of other articles which are probably written by the same author. 
+
+<p>Example:</p>
+
+```
+         Author
+1 Ben Ouezdou F
+                                                                     Title
+1 From Force Control and Sensory-Motor Informations to Mass Discrimination
+```
+
+
+How does it works?
+========================================================
+<p>The algorithm will compare the author by focus name with all the other ones that belong to the same group.</p>
+<p>This means that the following distances are be generated: "Initials, Authors Name, Coauthors, Title, Institution, Journal"</p>
+
+For the same author name and title: _A Study of Adaptive Locomotive Behaviors of a Biped Robot: Patterns Generation and Classification_
+
+```
+  Authors Initial's     Title Coauthors
+1       0         0 0.1391735      0.56
+```
+
+```
+   Keywords Institution
+1 0.2894244           1
+```
+
+Limitations
+========================================================
+The full dataset is not possible to be loaded in the free version of Shiny, for this reason we uploaded a subset of 20,000 instances in order for it to be deployed.
+
+Due to the subset, we have specific pairs of author and titles that can be chosen, here are some examples to try:
+
+<a target="_blank" href="https://raw.githubusercontent.com/DMKM1517/WebOfScience1/master/WebOfScienceShiny/disambiguation-app/data/author.csv"> Raw list of author and title pairs</a>
+
+It is important to keep in mind that if the title does not belong to the author in our database, then there will be no output. 
+
+Future Work
+========================================================
+For Future work, we will allow the user to input all the information for two articles in order to receive the probability of them being the same author according to our model.
+
+How to access the Application?
+========================================================
+Here you can try it for yourself.
+
+<a target="_blank" href="https://saulabrm.shinyapps.io/disambiguation-app/">Author Disambiguation - Disambiguate your author</a>
+
+<a target="_blank" href="https://github.com/DMKM1517/WebOfScience1/tree/master/WebOfScienceShiny/disambiguation-app"> Here's the source code</a>
+
+For the full dataset, please contact us.
