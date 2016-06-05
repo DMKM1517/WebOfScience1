@@ -10,13 +10,15 @@ The folder `R` contains the following codes:
 2. Model_Disambiguated_CV.R: Generates a Cross validated Ensemble Model utilizing a subset of disambiguated signatures.
 3. Model.R
 
-The folder `python` contains models built using scikit-learn and word2vec. `Name2Vec.bin` model was trained with the following parameters:
+The folder `python` contains models built using scikit-learn and word2vec. `Name2Vec.bin` is a skip-gram model that was trained with following parameters:
 ```
 min_word_count = 1
 vector_size = 10
 word_window = 5
 worker_threads = 8
 ```
+
+The `spark` folder contains code to build datapipelines that generate author,title pair signatures. All the pre-procesing functions are contained in the `PreProcessingUtil.scala`, `ADMain.scala` contains the main method and `Features.scala` containes pipeline logic. 
 
 The folder `disambiguattion-app` contains:
 
