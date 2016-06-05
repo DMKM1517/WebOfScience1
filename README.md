@@ -18,7 +18,7 @@ word_window = 5
 worker_threads = 8
 ```
 
-The `spark` folder contains code to build datapipelines that generate author,title pair signatures. All the pre-procesing functions are contained in the `PreProcessingUtil.scala`, `ADMain.scala` contains the main method and `Features.scala` containes pipeline logic. 
+The `spark` folder contains code to build datapipelines that generate author,title pair signatures. All the pre-procesing functions are contained in the `PreProcessingUtil.scala` and `Features.scala` contains pipeline logic. 
 
 The folder `disambiguattion-app` contains:
 
