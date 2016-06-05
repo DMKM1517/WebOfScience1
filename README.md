@@ -10,7 +10,7 @@ The folder `R` contains the following codes:
 2. Model_Disambiguated_CV.R: Generates a Cross validated Ensemble Model utilizing a subset of disambiguated signatures.
 3. Model.R
 
-The folder `python` contains model built using scikit-learn and word2vec. `Name2Vec.bin` model was trained with the following parameters:
+The folder `python` contains models built using scikit-learn and word2vec. `Name2Vec.bin` model was trained with the following parameters:
 ```
 min_word_count = 1
 vector_size = 10
